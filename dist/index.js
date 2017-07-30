@@ -25,6 +25,7 @@ var AutoCompleteComponent = (function () {
      */
     function AutoCompleteComponent() {
         this.hideListOnSelection = true;
+        this.showListChanged = false;
         this.keyword = null;
         this.suggestions = [];
         this._showList = false;
@@ -52,11 +53,20 @@ var AutoCompleteComponent = (function () {
                 return;
             }
             this._showList = value;
-            this._showList ? this.itemsShown.emit() : this.itemsHidden.emit();
+            this.showListChanged = true;
         },
         enumerable: true,
         configurable: true
     });
+    /**
+     * @return {?}
+     */
+    AutoCompleteComponent.prototype.ngAfterViewChecked = function () {
+        if (this.showListChanged) {
+            this.showListChanged = false;
+            this.showList ? this.itemsShown.emit() : this.itemsHidden.emit();
+        }
+    };
     /**
      * get items for auto-complete
      * @return {?}

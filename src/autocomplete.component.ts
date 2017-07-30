@@ -84,22 +84,24 @@ export class AutoCompleteComponent {
   @ViewChild('searchbarElem') searchbarElem;
   @ViewChild('inputElem') inputElem;
 
+  public suggestions:  string[];
+
   public get showList(): boolean {
-      return this._showList;
+    return this._showList;
   }
   public set showList(value: boolean) {
-      if (this._showList === value) {
-          return;
-      }
+    if (this._showList === value) {
+      return;
+    }
 
-      this._showList = value;
-      this._showList ? this.itemsShown.emit() : this.itemsHidden.emit();
+    this._showList = value;
+    this.showListChanged = true;
   }
+  private _showList: boolean;
 
-  public suggestions:  string[];
   private defaultOpts:  any;
   private selection: any;
-  private _showList: boolean;
+  private showListChanged: boolean = false;
 
   /**
    * create a new instace
@@ -116,6 +118,13 @@ export class AutoCompleteComponent {
 
     // set default options
     this.defaultOpts = defaultOpts;
+  }
+
+  ngAfterViewChecked() {
+    if (this.showListChanged) {
+      this.showListChanged = false;
+      this.showList ? this.itemsShown.emit() : this.itemsHidden.emit();
+    }
   }
 
   /**

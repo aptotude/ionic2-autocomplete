@@ -14,15 +14,17 @@ export declare class AutoCompleteComponent {
     ionAutoInput: EventEmitter<string>;
     searchbarElem: any;
     inputElem: any;
-    showList: boolean;
     suggestions: string[];
+    showList: boolean;
+    private _showList;
     private defaultOpts;
     private selection;
-    private _showList;
+    private showListChanged;
     /**
      * create a new instace
      */
     constructor();
+    ngAfterViewChecked(): void;
     /**
      * get items for auto-complete
      */
