@@ -58,7 +58,7 @@ const defaultOpts = {
           <li *ngFor="let suggestion of suggestions" (tap)="select(suggestion);$event.srcEvent.stopPropagation()">
               <ng-template
                       [ngTemplateOutlet]="template || defaultTemplate"
-                      [ngOutletContext]="
+                      [ngTemplateOutletContext]="
                         {attrs:{ data: suggestion, keyword: keyword, labelAttribute: dataProvider.labelAttribute }}"></ng-template>
           </li>
       </ul>
