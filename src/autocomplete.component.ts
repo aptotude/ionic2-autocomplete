@@ -24,7 +24,7 @@ const defaultOpts = {
   template: `
       <ion-input
               #inputElem
-              (keyup)="getItems($event)"
+              (keyup)="getItems()"
               (tap)="showResultsFirst && getItems()"
               [(ngModel)]="keyword"
               [placeholder]="options.placeholder == null ? defaultOpts.placeholder : options.placeholder"
@@ -36,7 +36,7 @@ const defaultOpts = {
       </ion-input>
       <ion-searchbar
               #searchbarElem
-              (ionInput)="getItems($event)"
+              (ionInput)="getItems()"
               (tap)="showResultsFirst && getItems()"
               [(ngModel)]="keyword"
               [cancelButtonText]="options.cancelButtonText == null ? defaultOpts.cancelButtonText : options.cancelButtonText"
@@ -97,9 +97,10 @@ export class AutoCompleteComponent {
     this._showList = value;
     this.showListChanged = true;
   }
+
+  public defaultOpts:  any;
   private _showList: boolean;
 
-  private defaultOpts:  any;
   private selection: any;
   private showListChanged: boolean = false;
 
@@ -186,7 +187,7 @@ export class AutoCompleteComponent {
   public select(selection: any): void {
     this.keyword = this.dataProvider.labelAttribute == null || selection[this.dataProvider.labelAttribute] == null
         ? selection : selection[this.dataProvider.labelAttribute];
-    
+
     if(this.hideListOnSelection) {
       this.hideItemList();
     }

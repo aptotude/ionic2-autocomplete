@@ -16,8 +16,8 @@ export declare class AutoCompleteComponent {
     inputElem: any;
     suggestions: string[];
     showList: boolean;
+    defaultOpts: any;
     private _showList;
-    private defaultOpts;
     private selection;
     private showListChanged;
     /**
