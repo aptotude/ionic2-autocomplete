@@ -16,6 +16,7 @@ export declare class AutoCompleteComponent {
     inputElem: any;
     suggestions: string[];
     showList: boolean;
+    isBusy: boolean;
     defaultOpts: any;
     private _showList;
     private selection;

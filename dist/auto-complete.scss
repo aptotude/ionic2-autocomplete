@@ -3,8 +3,21 @@ ion-auto-complete {
   display: block;
   width: 90vw;
   display: inline-block;
+  position: relative;
+
   ion-searchbar {
     padding: 1px !important;
+  }
+
+  ion-spinner {
+    position: absolute;
+    bottom: 12px;
+    height: 18px;
+    width: 18px;
+
+    * {
+      stroke: black !important;
+    }
   }
 
   .hidden {

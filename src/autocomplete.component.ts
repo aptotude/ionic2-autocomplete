@@ -51,6 +51,7 @@ const defaultOpts = {
               (ionClear)="clearValue(true)"
       >
       </ion-searchbar>
+      <ion-spinner *ngIf="isBusy" name="crescent"></ion-spinner>
       <ng-template #defaultTemplate let-attrs="attrs">
           <span [innerHTML]='(attrs.labelAttribute ? attrs.data[attrs.labelAttribute] : attrs.data) | boldprefix:attrs.keyword'></span>
       </ng-template>
@@ -98,6 +99,8 @@ export class AutoCompleteComponent {
     this.showListChanged = true;
   }
 
+  public isBusy: boolean = false;
+
   public defaultOpts:  any;
   private _showList: boolean;
 
@@ -139,6 +142,7 @@ export class AutoCompleteComponent {
       return;
     }
 
+    this.isBusy = true;
     let result = this.dataProvider.getResults(this.keyword);
     // if result is instanceof Subject, use it asObservable
     if (result instanceof Subject) {
@@ -149,6 +153,7 @@ export class AutoCompleteComponent {
       result
           .subscribe(
               (results: any) => {
+                this.isBusy = false;
                 this.suggestions = results;
                 this.showItemList();
               },
@@ -156,6 +161,7 @@ export class AutoCompleteComponent {
           )
       ;
     } else {
+      this.isBusy = false;
       this.suggestions = result;
       this.showItemList();
     }

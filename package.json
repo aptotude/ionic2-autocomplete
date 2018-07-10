@@ -68,11 +68,11 @@
     "protractor": "~5.1.0",
     "rollup": "^0.41.6",
     "run-sequence": "^1.2.2",
-    "rxjs": "5.1.1",
+    "rxjs": "5.4.2",
     "sw-toolbox": "3.6.0",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
-    "typescript": "~2.2.0",
+    "typescript": "2.4.0",
     "zone.js": "0.8.10"
   },
   "engines": {

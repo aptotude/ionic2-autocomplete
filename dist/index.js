@@ -25,6 +25,7 @@ var AutoCompleteComponent = (function () {
      */
     function AutoCompleteComponent() {
         this.hideListOnSelection = true;
+        this.isBusy = false;
         this.showListChanged = false;
         this.keyword = null;
         this.suggestions = [];
@@ -80,6 +81,7 @@ var AutoCompleteComponent = (function () {
             this.suggestions = [];
             return;
         }
+        this.isBusy = true;
         var /** @type {?} */ result = this.dataProvider.getResults(this.keyword);
         // if result is instanceof Subject, use it asObservable
         if (result instanceof Subject) {
@@ -89,11 +91,13 @@ var AutoCompleteComponent = (function () {
         if (result instanceof Observable) {
             result
                 .subscribe(function (results) {
+                _this.isBusy = false;
                 _this.suggestions = results;
                 _this.showItemList();
             }, function (error) { return console.error(error); });
         }
         else {
+            this.isBusy = false;
             this.suggestions = result;
             this.showItemList();
         }
@@ -191,37 +195,37 @@ var AutoCompleteComponent = (function () {
             this.hideItemList();
         }
     };
+    AutoCompleteComponent.decorators = [
+        { type: Component, args: [{
+                    host: {
+                        '(document:click)': 'documentClickHandler($event)',
+                    },
+                    template: "\n      <ion-input\n              #inputElem\n              (keyup)=\"getItems()\"\n              (tap)=\"showResultsFirst && getItems()\"\n              [(ngModel)]=\"keyword\"\n              [placeholder]=\"options.placeholder == null ? defaultOpts.placeholder : options.placeholder\"\n              [type]=\"options.type == null ? defaultOpts.type : options.type\"\n              [clearOnEdit]=\"options.clearOnEdit == null ? defaultOpts.clearOnEdit : options.clearOnEdit\"\n              [clearInput]=\"options.clearInput == null ? defaultOpts.clearInput : options.clearInput\"\n              [ngClass]=\"{'hidden': !useIonInput}\"\n      >\n      </ion-input>\n      <ion-searchbar\n              #searchbarElem\n              (ionInput)=\"getItems()\"\n              (tap)=\"showResultsFirst && getItems()\"\n              [(ngModel)]=\"keyword\"\n              [cancelButtonText]=\"options.cancelButtonText == null ? defaultOpts.cancelButtonText : options.cancelButtonText\"\n              [showCancelButton]=\"options.showCancelButton == null ? defaultOpts.showCancelButton : options.showCancelButton\"\n              [debounce]=\"options.debounce == null ? defaultOpts.debounce : options.debounce\"\n              [placeholder]=\"options.placeholder == null ? defaultOpts.placeholder : options.placeholder\"\n              [autocomplete]=\"options.autocomplete == null ? defaultOpts.autocomplete : options.autocomplete\"\n              [autocorrect]=\"options.autocorrect == null ? defaultOpts.autocorrect : options.autocorrect\"\n              [spellcheck]=\"options.spellcheck == null ? defaultOpts.spellcheck : options.spellcheck\"\n              [type]=\"options.type == null ? defaultOpts.type : options.type\"\n              [ngClass]=\"{'hidden': useIonInput}\"\n              (ionClear)=\"clearValue(true)\"\n      >\n      </ion-searchbar>\n      <ion-spinner *ngIf=\"isBusy\" name=\"crescent\"></ion-spinner>\n      <ng-template #defaultTemplate let-attrs=\"attrs\">\n          <span [innerHTML]='(attrs.labelAttribute ? attrs.data[attrs.labelAttribute] : attrs.data) | boldprefix:attrs.keyword'></span>\n      </ng-template>\n      <ul *ngIf=\"suggestions.length > 0 && showList\">\n          <li *ngFor=\"let suggestion of suggestions\" (tap)=\"select(suggestion);$event.srcEvent.stopPropagation()\">\n              <ng-template\n                      [ngTemplateOutlet]=\"template || defaultTemplate\"\n                      [ngTemplateOutletContext]=\"\n                        {attrs:{ data: suggestion, keyword: keyword, labelAttribute: dataProvider.labelAttribute }}\"></ng-template>\n          </li>\n      </ul>\n      <p *ngIf=\"suggestions.length == 0 && showList && options.noItems\">{{ options.noItems }}</p>\n  ",
+                    selector: 'ion-auto-complete'
+                },] },
+    ];
+    /**
+     * @nocollapse
+     */
+    AutoCompleteComponent.ctorParameters = function () { return []; };
+    AutoCompleteComponent.propDecorators = {
+        'dataProvider': [{ type: Input },],
+        'options': [{ type: Input },],
+        'keyword': [{ type: Input },],
+        'showResultsFirst': [{ type: Input },],
+        'alwaysShowList': [{ type: Input },],
+        'hideListOnSelection': [{ type: Input },],
+        'template': [{ type: Input },],
+        'useIonInput': [{ type: Input },],
+        'itemSelected': [{ type: Output },],
+        'itemsShown': [{ type: Output },],
+        'itemsHidden': [{ type: Output },],
+        'ionAutoInput': [{ type: Output },],
+        'searchbarElem': [{ type: ViewChild, args: ['searchbarElem',] },],
+        'inputElem': [{ type: ViewChild, args: ['inputElem',] },],
+    };
     return AutoCompleteComponent;
 }());
-AutoCompleteComponent.decorators = [
-    { type: Component, args: [{
-                host: {
-                    '(document:click)': 'documentClickHandler($event)',
-                },
-                template: "\n      <ion-input\n              #inputElem\n              (keyup)=\"getItems()\"\n              (tap)=\"showResultsFirst && getItems()\"\n              [(ngModel)]=\"keyword\"\n              [placeholder]=\"options.placeholder == null ? defaultOpts.placeholder : options.placeholder\"\n              [type]=\"options.type == null ? defaultOpts.type : options.type\"\n              [clearOnEdit]=\"options.clearOnEdit == null ? defaultOpts.clearOnEdit : options.clearOnEdit\"\n              [clearInput]=\"options.clearInput == null ? defaultOpts.clearInput : options.clearInput\"\n              [ngClass]=\"{'hidden': !useIonInput}\"\n      >\n      </ion-input>\n      <ion-searchbar\n              #searchbarElem\n              (ionInput)=\"getItems()\"\n              (tap)=\"showResultsFirst && getItems()\"\n              [(ngModel)]=\"keyword\"\n              [cancelButtonText]=\"options.cancelButtonText == null ? defaultOpts.cancelButtonText : options.cancelButtonText\"\n              [showCancelButton]=\"options.showCancelButton == null ? defaultOpts.showCancelButton : options.showCancelButton\"\n              [debounce]=\"options.debounce == null ? defaultOpts.debounce : options.debounce\"\n              [placeholder]=\"options.placeholder == null ? defaultOpts.placeholder : options.placeholder\"\n              [autocomplete]=\"options.autocomplete == null ? defaultOpts.autocomplete : options.autocomplete\"\n              [autocorrect]=\"options.autocorrect == null ? defaultOpts.autocorrect : options.autocorrect\"\n              [spellcheck]=\"options.spellcheck == null ? defaultOpts.spellcheck : options.spellcheck\"\n              [type]=\"options.type == null ? defaultOpts.type : options.type\"\n              [ngClass]=\"{'hidden': useIonInput}\"\n              (ionClear)=\"clearValue(true)\"\n      >\n      </ion-searchbar>\n      <ng-template #defaultTemplate let-attrs=\"attrs\">\n          <span [innerHTML]='(attrs.labelAttribute ? attrs.data[attrs.labelAttribute] : attrs.data) | boldprefix:attrs.keyword'></span>\n      </ng-template>\n      <ul *ngIf=\"suggestions.length > 0 && showList\">\n          <li *ngFor=\"let suggestion of suggestions\" (tap)=\"select(suggestion);$event.srcEvent.stopPropagation()\">\n              <ng-template\n                      [ngTemplateOutlet]=\"template || defaultTemplate\"\n                      [ngTemplateOutletContext]=\"\n                        {attrs:{ data: suggestion, keyword: keyword, labelAttribute: dataProvider.labelAttribute }}\"></ng-template>\n          </li>\n      </ul>\n      <p *ngIf=\"suggestions.length == 0 && showList && options.noItems\">{{ options.noItems }}</p>\n  ",
-                selector: 'ion-auto-complete'
-            },] },
-];
-/**
- * @nocollapse
- */
-AutoCompleteComponent.ctorParameters = function () { return []; };
-AutoCompleteComponent.propDecorators = {
-    'dataProvider': [{ type: Input },],
-    'options': [{ type: Input },],
-    'keyword': [{ type: Input },],
-    'showResultsFirst': [{ type: Input },],
-    'alwaysShowList': [{ type: Input },],
-    'hideListOnSelection': [{ type: Input },],
-    'template': [{ type: Input },],
-    'useIonInput': [{ type: Input },],
-    'itemSelected': [{ type: Output },],
-    'itemsShown': [{ type: Output },],
-    'itemsHidden': [{ type: Output },],
-    'ionAutoInput': [{ type: Output },],
-    'searchbarElem': [{ type: ViewChild, args: ['searchbarElem',] },],
-    'inputElem': [{ type: ViewChild, args: ['inputElem',] },],
-};
 
 /**
  * bolds the beggining of the matching string in the item
@@ -240,18 +244,18 @@ var BoldPrefix = (function () {
         var /** @type {?} */ escaped_keyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         return value.replace(new RegExp(escaped_keyword, 'gi'), function (str) { return str.bold(); });
     };
+    BoldPrefix.decorators = [
+        { type: Pipe, args: [{
+                    name: 'boldprefix'
+                },] },
+        { type: Injectable },
+    ];
+    /**
+     * @nocollapse
+     */
+    BoldPrefix.ctorParameters = function () { return []; };
     return BoldPrefix;
 }());
-BoldPrefix.decorators = [
-    { type: Pipe, args: [{
-                name: 'boldprefix'
-            },] },
-    { type: Injectable },
-];
-/**
- * @nocollapse
- */
-BoldPrefix.ctorParameters = function () { return []; };
 
 var AutoCompleteModule = (function () {
     function AutoCompleteModule() {
@@ -265,28 +269,28 @@ var AutoCompleteModule = (function () {
             providers: []
         };
     };
+    AutoCompleteModule.decorators = [
+        { type: NgModule, args: [{
+                    imports: [
+                        CommonModule,
+                        FormsModule,
+                        IonicModule
+                    ],
+                    declarations: [
+                        AutoCompleteComponent,
+                        BoldPrefix
+                    ],
+                    exports: [
+                        AutoCompleteComponent,
+                        BoldPrefix
+                    ]
+                },] },
+    ];
+    /**
+     * @nocollapse
+     */
+    AutoCompleteModule.ctorParameters = function () { return []; };
     return AutoCompleteModule;
 }());
-AutoCompleteModule.decorators = [
-    { type: NgModule, args: [{
-                imports: [
-                    CommonModule,
-                    FormsModule,
-                    IonicModule
-                ],
-                declarations: [
-                    AutoCompleteComponent,
-                    BoldPrefix
-                ],
-                exports: [
-                    AutoCompleteComponent,
-                    BoldPrefix
-                ]
-            },] },
-];
-/**
- * @nocollapse
- */
-AutoCompleteModule.ctorParameters = function () { return []; };
 
 export { AutoCompleteModule, AutoCompleteComponent, BoldPrefix };
